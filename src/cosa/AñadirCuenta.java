@@ -4,7 +4,9 @@
  */
 package cosa;
 
+import Atxy2k.CustomTextField.RestrictedTextField;
 import java.util.Random;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -20,16 +22,37 @@ public class AñadirCuenta extends javax.swing.JDialog {
     public final static int CANCELAR = 1;
     private int opcion;
     
-    private boolean normal = false;
+    private boolean normal = true;
     
     private int numeroCuenta;
     private String titul;
     private double sald;
     
+    private CuentaNormal cuentaNormal = null;
+    private CuentaPremium cuentaPremium = null;
+    
+    RestrictedTextField restricted;
+
+    public CuentaNormal getCuentaNormal() {
+        return cuentaNormal;
+    }
+
+    public CuentaPremium getCuentaPremium() {
+        return cuentaPremium;
+    }
+    
+
+    public boolean isNormal() {
+        return normal;
+    }
+    
+    
     public AñadirCuenta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
+        restricted = new RestrictedTextField(campo_titular);
+        restricted.setOnlyText(true);
     }
     
     public int showDialog(){
@@ -61,8 +84,8 @@ public class AñadirCuenta extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         num_cuenta = new javax.swing.JLabel();
-        titular = new javax.swing.JTextField();
-        jSpinner1 = new javax.swing.JSpinner();
+        campo_titular = new javax.swing.JTextField();
+        campo_saldo = new javax.swing.JSpinner();
         agregar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
         boton_normal = new javax.swing.JToggleButton();
@@ -81,9 +104,10 @@ public class AñadirCuenta extends javax.swing.JDialog {
 
         num_cuenta.setText("...");
 
-        titular.addActionListener(new java.awt.event.ActionListener() {
+        campo_titular.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        campo_titular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                titularActionPerformed(evt);
+                campo_titularActionPerformed(evt);
             }
         });
 
@@ -129,8 +153,8 @@ public class AñadirCuenta extends javax.swing.JDialog {
                                 .addGap(60, 60, 60)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(num_cuenta)
-                                    .addComponent(titular)
-                                    .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)))))
+                                    .addComponent(campo_titular)
+                                    .addComponent(campo_saldo, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(95, 95, 95)
                         .addComponent(boton_normal)))
@@ -146,11 +170,11 @@ public class AñadirCuenta extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(titular, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(campo_titular, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(campo_saldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                 .addComponent(boton_normal)
                 .addGap(18, 18, 18)
@@ -174,12 +198,24 @@ public class AñadirCuenta extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void titularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titularActionPerformed
+    private void campo_titularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_campo_titularActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_titularActionPerformed
+    }//GEN-LAST:event_campo_titularActionPerformed
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
        this.opcion = ACEPTAR;
+       String titular_temporal = campo_titular.getText();
+        if (!titular_temporal.isEmpty()) {
+            titul = titular_temporal;
+            sald = Double.parseDouble(campo_saldo.getValue().toString());
+            if (normal) {
+                cuentaNormal = new CuentaNormal(sald, numeroCuenta, titul);
+            } else {
+                cuentaPremium = new CuentaPremium(sald, numeroCuenta, titul);
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Escriba nombre del titular", "Error", JOptionPane.WARNING_MESSAGE);
+        }
        this.setVisible(false);
     }//GEN-LAST:event_agregarActionPerformed
 
@@ -245,13 +281,13 @@ public class AñadirCuenta extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton agregar;
     private javax.swing.JToggleButton boton_normal;
+    private javax.swing.JSpinner campo_saldo;
+    private javax.swing.JTextField campo_titular;
     private javax.swing.JButton cancelar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JLabel num_cuenta;
-    private javax.swing.JTextField titular;
     // End of variables declaration//GEN-END:variables
 }

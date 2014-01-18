@@ -7,6 +7,7 @@ package cosa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import kfjlgdfkd.MyTableModel;
 
 /**
  *
@@ -18,7 +19,7 @@ public class GUI extends javax.swing.JFrame implements ActionListener {
      * Creates new form GUI
      */
     
-    public ArrayList<Cuenta> cuentas = new ArrayList<Cuenta>();
+    MyTableModel tableModel = new MyTableModel();
     
     public GUI() {
         initComponents();
@@ -29,6 +30,9 @@ public class GUI extends javax.swing.JFrame implements ActionListener {
         setLocationRelativeTo(null);
         menu_añadir.addActionListener(this);
         menu_salir.addActionListener(this);
+        table_cuentas.setModel(tableModel);
+        menu_agregar.addActionListener(this);
+        menu_eliminar.addActionListener(this);
     }
 
     /**
@@ -40,17 +44,26 @@ public class GUI extends javax.swing.JFrame implements ActionListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        menu_agregar = new javax.swing.JMenuItem();
+        menu_eliminar = new javax.swing.JMenuItem();
         myPanel1 = new cosa.MyPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table_cuentas = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menu_añadir = new javax.swing.JMenuItem();
         menu_salir = new javax.swing.JMenuItem();
 
+        menu_agregar.setText("Agregar");
+        jPopupMenu1.add(menu_agregar);
+
+        menu_eliminar.setText("Eliminar");
+        jPopupMenu1.add(menu_eliminar);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        table_cuentas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -61,21 +74,20 @@ public class GUI extends javax.swing.JFrame implements ActionListener {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        table_cuentas.setComponentPopupMenu(jPopupMenu1);
+        jScrollPane1.setViewportView(table_cuentas);
 
         javax.swing.GroupLayout myPanel1Layout = new javax.swing.GroupLayout(myPanel1);
         myPanel1.setLayout(myPanel1Layout);
         myPanel1Layout.setHorizontalGroup(
             myPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(myPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 157, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
         );
         myPanel1Layout.setVerticalGroup(
             myPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(myPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 349, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 322, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Archivo");
@@ -141,11 +153,14 @@ public class GUI extends javax.swing.JFrame implements ActionListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JMenuItem menu_agregar;
     private javax.swing.JMenuItem menu_añadir;
+    private javax.swing.JMenuItem menu_eliminar;
     private javax.swing.JMenuItem menu_salir;
     private cosa.MyPanel myPanel1;
+    private javax.swing.JTable table_cuentas;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -155,6 +170,17 @@ public class GUI extends javax.swing.JFrame implements ActionListener {
             añadir();
         } else if (origin == menu_salir){
             System.exit(0);
+        } else if (origin == menu_agregar){
+            añadir();
+        } else if (origin == menu_eliminar){
+            eliminar();
+        }
+    }
+    
+    private void eliminar(){
+        int row = table_cuentas.getSelectedRow();
+        if (row!=-1){
+            tableModel.removeRow(row);
         }
     }
     
@@ -162,7 +188,12 @@ public class GUI extends javax.swing.JFrame implements ActionListener {
         AñadirCuenta dialog = new AñadirCuenta(this, rootPaneCheckingEnabled);
         int respuesta = dialog.showDialog();
         if (respuesta == AñadirCuenta.ACEPTAR) {
-            System.out.println("aceptaste");     
+            if (dialog.isNormal()) {
+                tableModel.addRow(dialog.getCuentaNormal());
+            } else {
+                tableModel.addRow(dialog.getCuentaPremium());
+            }
+     
         } else {
             System.out.println("cancelaste");
         }
